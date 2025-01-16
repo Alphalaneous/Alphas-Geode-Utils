@@ -16,13 +16,19 @@
 #endif
 
 namespace AlphaUtils {
+
+    struct ModifyInfo {
+        int priority;
+        std::function<void(cocos2d::CCNode*)> method;
+    };
+
     class ALPHA_UTILS_API_DLL NodeModding {
     protected:
-        std::unordered_map<std::string, std::vector<std::pair<int, std::function<void(cocos2d::CCNode*)>>>> m_nodesToModify;
+        std::unordered_map<std::string, std::vector<ModifyInfo>> m_nodesToModify;
 
     public:
         static NodeModding* get();
-        std::unordered_map<std::string, std::vector<std::pair<int, std::function<void(cocos2d::CCNode*)>>>> getNodesToModify();
+        std::unordered_map<std::string, std::vector<ModifyInfo>> getNodesToModify();
         void addNodeToModify(std::string className, int prio, std::function<void(cocos2d::CCNode*)> func);
         void handleNode(cocos2d::CCNode* node);
     };  

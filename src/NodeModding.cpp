@@ -5,7 +5,7 @@
 using namespace geode::prelude;
 using namespace AlphaUtils;
 
-std::unordered_map<std::string, std::vector<std::pair<int, std::function<void(CCNode*)>>>> NodeModding::getNodesToModify() {
+std::unordered_map<std::string, std::vector<ModifyInfo>> NodeModding::getNodesToModify() {
     return m_nodesToModify;
 }
 
@@ -16,13 +16,13 @@ void NodeModding::addNodeToModify(std::string className, int prio, std::function
 void NodeModding::handleNode(CCNode* node) {
     std::string className = AlphaUtils::Cocos::getClassName(node);
     if (m_nodesToModify.contains(className)) {
-        std::vector<std::pair<int, std::function<void(CCNode*)>>> methods = m_nodesToModify[className];
+        std::vector<ModifyInfo> methods = m_nodesToModify[className];
         std::sort(methods.begin(), methods.end(), [](auto& left, auto& right) {
-            return left.first < right.first;
+            return left.priority < right.priority;
         });
 
         for (auto pair : methods) {
-            pair.second(node);
+            pair.method(node);
         }
     }
 }
