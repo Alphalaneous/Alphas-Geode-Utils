@@ -16,7 +16,7 @@ To edit the priority (lets say another mod modifies the same node using this) yo
 ```c++
 class $nodeModify(MyCustomCreatorLayer, CustomCreatorLayer) {
 
-    static int modifyPrio() {
+	static int modifyPrio() {
 		return 10;
 	}
 
