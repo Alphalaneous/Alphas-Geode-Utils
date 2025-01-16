@@ -21,7 +21,7 @@ void NodeModding::handleNode(CCNode* node) {
             return left.priority < right.priority;
         });
 
-        for (auto pair : methods) {
+        for (auto& pair : methods) {
             pair.method(node);
         }
     }
