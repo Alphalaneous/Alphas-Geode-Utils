@@ -1,0 +1,24 @@
+{
+	"geode": "4.1.2",
+	"gd": {
+		"win": "2.2074",
+		"android": "2.2074",
+		"mac": "2.2074",
+		"ios": "2.2074"
+	},
+	"id": "alphalaneous.alphas_geode_utils",
+	"name": "Alpha's Geode Utils",
+	"version": "v1.0.0",
+	"developer": "Alphalaneous",
+	"description": "Miscellaneous utilities for Geode Modding",
+	"api": {
+        "include": [
+            "include/*.h"
+        ]
+    },
+	"links": {
+        "homepage": "https://linktr.ee/Alphalaneous",
+        "source": "https://github.com/Alphalaneous/Alphas-Geode-Utils",
+        "community": "https://discord.gg/Txn2CA5dHF"
+    }
+}
