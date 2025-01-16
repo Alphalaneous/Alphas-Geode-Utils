@@ -4,8 +4,8 @@ Miscellaneous Geode utils to make development easier:
 
 ## Modifying any node
 
-Familiar modify syntax as Geode, supporting fields. `class $modifyNode(SomeNode)`
-You can name the modified node the same way as well `class $modifyNode(MySomeNode, SomeNode)`
+Familiar modify syntax as Geode, supporting fields. `class $nodeModify(SomeNode)`
+You can name the modified node the same way as well `class $nodeModify(MySomeNode, SomeNode)`
 
 To use this, you will create a `void modify()` method within that class and inside of there you can change the node to your hearts content. You can use the fields struct just like in Geode to add fields if needed. 
 
