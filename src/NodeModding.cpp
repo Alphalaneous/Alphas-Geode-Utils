@@ -17,7 +17,7 @@ void NodeModding::handleNode(CCNode* node) {
     std::string className = AlphaUtils::Cocos::getClassName(node);
     if (m_nodesToModify.contains(className)) {
         std::vector<std::pair<int, std::function<void(CCNode*)>>> methods = m_nodesToModify[className];
-        std::sort(methods.begin(), methods.end(), [](auto left, auto right) {
+        std::sort(methods.begin(), methods.end(), [](auto& left, auto& right) {
             return left.first < right.first;
         });
 
