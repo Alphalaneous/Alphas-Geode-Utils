@@ -52,7 +52,8 @@ Getting sprites while ignoring Texture Loader fallback:
 `std::optional<cocos2d::CCSprite*> getSpriteByFrameName(const char* sprFrameName)`
 
 Getting a layer from the scene even during transition:
-`std::optional<Layer> getLayer()`
+`std::optional<cocos2d::CCNode*> getLayer()`
+`std::optional<cocos2d::CCNode*> getLayerByClassName(std::string className)`
 
 Setting a node color by hex code:
 `bool setColorByHex(cocos2d::CCRGBAProtocol* node, std::string colorHex)`

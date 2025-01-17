@@ -1,3 +1,7 @@
+# 1.0.3
+- Add string variant for getLayer
+- Fix a bug with getLayer
+
 # 1.0.2
 - Fix a typo
 

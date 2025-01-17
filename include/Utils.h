@@ -101,7 +101,7 @@ namespace AlphaUtils {
         }
 
         template <typename Layer>
-        static inline std::optional<Layer> getLayer() {
+        static inline std::optional<cocos2d::CCNode*> getLayer() {
 
             auto scene = cocos2d::CCDirector::sharedDirector()->getRunningScene();
             if (cocos2d::CCTransitionScene* trans = geode::cast::typeinfo_cast<cocos2d::CCTransitionScene*>(scene)) {
@@ -111,6 +111,18 @@ namespace AlphaUtils {
                 if (cocos2d::CCNode* node = scene->getChildByType<Layer>(0)) {
                     return node;
                 }
+            }
+            return std::nullopt;
+        }
+
+        static inline std::optional<cocos2d::CCNode*> getLayerByClassName(std::string className) {
+
+            auto scene = cocos2d::CCDirector::sharedDirector()->getRunningScene();
+            if (cocos2d::CCTransitionScene* trans = geode::cast::typeinfo_cast<cocos2d::CCTransitionScene*>(scene)) {
+                scene = public_cast(trans, m_pInScene);
+            }
+            if (scene) {
+                return getChildByClassName(scene, className, 0);
             }
             return std::nullopt;
         }
