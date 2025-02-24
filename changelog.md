@@ -1,3 +1,6 @@
+# 1.0.4
+- Add tags
+
 # 1.0.3
 - Add string variant for getLayer
 - Fix a bug with getLayer
