@@ -39,12 +39,6 @@ namespace AlphaUtils {
         static int modifyPrio() { return 0; }
     };
 
-    template <class Derived>
-    struct ObjectWrapper : public cocos2d::CCObject {
-        ObjectFieldIntermediate<Derived, cocos2d::CCObject> m_fields;
-        static int modifyPrio() { return 0; }
-    };
-
     template <class T>
     class ModifyLoad {
     public:
