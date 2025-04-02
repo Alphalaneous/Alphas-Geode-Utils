@@ -8,9 +8,9 @@ using namespace AlphaUtils;
 
 class $modify(CCObject) {
     CCObject* autorelease() {
-        if (CCNode* node = typeinfo_cast<CCNode*>(this)) {
+        //if (CCNode* node = typeinfo_cast<CCNode*>(this)) {
             NodeModding::get()->handleNode(node);
-        }
+        //}
         return CCObject::autorelease();
     }
 };
