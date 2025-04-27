@@ -5,26 +5,49 @@
 using namespace geode::prelude;
 using namespace AlphaUtils;
 
-std::unordered_map<std::string, std::vector<ModifyInfo>> NodeModding::getNodesToModify() {
-    return m_nodesToModify;
+std::unordered_map<std::string, std::vector<ModifyObjectInfo>> ObjectModding::getObjectsToModify() {
+    return m_objectsToModify;
 }
 
-void NodeModding::addNodeToModify(std::string className, int prio, std::function<void(CCNode*)> func) {
-    m_nodesToModify[className].push_back({prio, func});
+void ObjectModding::addObjectToModify(std::string className, int prio, std::function<void(FieldCCObject*)> func) {
+    m_objectsToModify[className].push_back({prio, func});
 }
 
-void NodeModding::handleNode(CCNode* node) {
-    std::string className = AlphaUtils::Cocos::getClassName(node);
-    if (m_nodesToModify.contains(className)) {
-        std::vector<ModifyInfo> methods = m_nodesToModify[className];
+void ObjectModding::handleObject(FieldCCObject* object) {
+    std::string className = AlphaUtils::Cocos::getClassName(object);
+    if (m_objectsToModify.contains(className)) {
+        std::vector<ModifyObjectInfo> methods = m_objectsToModify[className];
         std::sort(methods.begin(), methods.end(), [](auto& left, auto& right) {
             return left.priority < right.priority;
         });
 
         for (auto& pair : methods) {
-            pair.method(node);
+            pair.method(object);
         }
     }
+}
+
+ObjectModding* ObjectModding::get() {
+    static ObjectModding* instance = nullptr;
+    if (!instance) {
+        instance = new ObjectModding();
+    }
+    return instance;
+}
+
+std::unordered_map<std::string, std::vector<ModifyInfo>> NodeModding::getNodesToModify() {
+    return m_nodesToModify;
+}
+
+void NodeModding::addNodeToModify(std::string className, int prio, std::function<void(CCNode*)> func) {
+    std::function<void(FieldCCObject*)> fieldFunc = [func](FieldCCObject* obj) { 
+        func(reinterpret_cast<CCNode*>(obj));
+    };
+    ObjectModding::get()->addObjectToModify(className, prio, fieldFunc);
+}
+
+void NodeModding::handleNode(CCNode* node) {
+    /* no operation */
 }
 
 NodeModding* NodeModding::get() {

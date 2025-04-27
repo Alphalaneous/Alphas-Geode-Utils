@@ -2,10 +2,12 @@
 
 Miscellaneous Geode utils to make development easier:
 
-## Modifying any node
+## Modifying any CCObject
 
-Familiar modify syntax as Geode, supporting fields. `class $nodeModify(SomeNode)`
-You can name the modified node the same way as well `class $nodeModify(MySomeNode, SomeNode)`
+Familiar modify syntax as Geode, supporting fields. `class $objectModify(SomeObject)` or `class $nodeModify(SomeNode)`
+You can name the modified node/object the same way as well `class $objectModify(MySomeObject, SomeObject)` or `class $nodeModify(MySomeNode, SomeNode)`
+
+$nodeModify and $objectModify do the same thing, but both names are available for organization purposes.
 
 To use this, you will create a `void modify()` method within that class and inside of there you can change the node to your hearts content. You can use the fields struct just like in Geode to add fields if needed. 
 

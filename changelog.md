@@ -1,3 +1,6 @@
+# 1.1.0
+- Fields and User Objects can now be used with CCObjects in the same way as CCNodes
+
 # 1.0.5
 - iOS support
 

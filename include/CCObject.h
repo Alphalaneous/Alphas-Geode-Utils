@@ -4,10 +4,20 @@
 #include <Geode/modify/CCObject.hpp>
 #include <Geode/modify/CCScriptEngineManager.hpp>
 #include <Geode/cocos/cocoa/CCObject.h>
+#include "Fields.h"
+
+#ifdef GEODE_IS_WINDOWS
+    #ifdef ALPHALANEOUS_UTILS_API_EXPORTING
+        #define ALPHA_UTILS_API_DLL __declspec(dllexport)
+    #else
+        #define ALPHA_UTILS_API_DLL __declspec(dllimport)
+    #endif
+#else
+    #define ALPHA_UTILS_API_DLL __attribute__((visibility("default")))
+#endif
 
 struct ObjectData : public cocos2d::CCObject {
     geode::Ref<cocos2d::CCObject> m_object;
-    int m_tag;
 };
 
 class DummyScriptEngineProtocol : public cocos2d::CCScriptEngineProtocol {
@@ -33,14 +43,18 @@ class DummyScriptEngineProtocol : public cocos2d::CCScriptEngineProtocol {
     bool parseConfig(ConfigType type, const gd::string& str) { return false; };
 };
 
-class $modify(MyCCScriptEngineManager, cocos2d::CCScriptEngineManager) {
+struct ALPHA_UTILS_API_DLL MyCCScriptEngineManager : public geode::Modify<MyCCScriptEngineManager, cocos2d::CCScriptEngineManager> {
     static cocos2d::CCScriptEngineManager* sharedManager();
 };
 
-class $modify(FieldCCObject, cocos2d::CCObject) {
-    cocos2d::CCObject* autorelease();
+class ObjectFieldContainer;
+
+struct ALPHA_UTILS_API_DLL FieldCCObject : public cocos2d::CCObject {
     ObjectData* getObjectData();
     cocos2d::CCObject* getUserObject();
     void setUserObject(cocos2d::CCObject* object);
     void tryCreateData();
+    ObjectFieldContainer* getFieldContainer(char const* forClass);
+    void setUserObject(std::string const& id, CCObject* value);
+    CCObject* getUserObject(std::string const& id);
 };

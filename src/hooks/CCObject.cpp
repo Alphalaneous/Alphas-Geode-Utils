@@ -1,7 +1,8 @@
 #include <Geode/Geode.hpp>
 #include "../../include/Utils.h"
 #include "../../include/NodeModding.h"
-#include "CCObject.h"
+#include "../../include/CCObject.h"
+#include "../../include/Fields.h"
 #include <Geode/modify/CCObject.hpp>
 #include <queue>
 
@@ -42,21 +43,21 @@ CCScriptEngineManager* MyCCScriptEngineManager::sharedManager() {
     return ret;
 }
 
+class $modify(CCObject) {
+    CCObject* autorelease() {
+        FieldCCObject* obj = reinterpret_cast<FieldCCObject*>(this);
+        obj->tryCreateData();
+        ObjectModding::get()->handleObject(obj);
+        return CCObject::autorelease();
+    }
+};
+
 void FieldCCObject::tryCreateData() {
     if (m_nLuaID == 0) {
         ObjectData* data = new ObjectData();
         CCPoolManager::sharedPoolManager()->addObject(data);
         m_nLuaID = allocateObjectData(data);
     }
-}
-
-CCObject* FieldCCObject::autorelease() {
-    if (CCNode* node = typeinfo_cast<CCNode*>(this)) {
-        NodeModding::get()->handleNode(node);
-    }
-    tryCreateData();
-
-    return CCObject::autorelease();
 }
 
 ObjectData* FieldCCObject::getObjectData() {
@@ -78,3 +79,26 @@ void FieldCCObject::setUserObject(CCObject* object) {
         data->m_object = object;
     }
 }
+
+ObjectFieldContainer* FieldCCObject::getFieldContainer(char const* forClass) {
+    return ObjectMetadata::set(this)->getFieldContainer(forClass);
+}
+
+void FieldCCObject::setUserObject(std::string const& id, CCObject* value) {
+    auto meta = ObjectMetadata::set(this);
+    if (value) {
+        meta->m_userObjects[id] = value;
+    }
+    else {
+        meta->m_userObjects.erase(id);
+    }
+}
+
+CCObject* FieldCCObject::getUserObject(std::string const& id) {
+    auto meta = ObjectMetadata::set(this);
+    if (meta->m_userObjects.count(id)) {
+        return meta->m_userObjects.at(id);
+    }
+    return nullptr;
+}
+
