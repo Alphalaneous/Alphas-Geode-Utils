@@ -96,10 +96,23 @@ class GEODE_CONCAT(GEODE_CONCAT(derived, Hook), __LINE__) : AlphaUtils::ObjectWr
 };\
 struct derived : AlphaUtils::ObjectWrapper<derived>
 
+#define ALPHA_NODE_MODIFY_DECLARE(base, derived) \
+GEODE_CONCAT(GEODE_CONCAT(derived, __LINE__), Dummy);\
+struct derived;\
+class GEODE_CONCAT(GEODE_CONCAT(derived, Hook), __LINE__) : AlphaUtils::NodeWrapper<derived> {\
+    private:\
+    static inline AlphaUtils::ModifyObjectLoad<derived> s_apply{#base};\
+};\
+struct derived : AlphaUtils::NodeWrapper<derived>
+
 #define MODIFY1(base) ALPHA_MODIFY_DECLARE(base, GEODE_CONCAT(hook, __LINE__))
 #define MODIFY2(derived, base) ALPHA_MODIFY_DECLARE(base, derived)
 
-#define $nodeModify(...) \
-    GEODE_INVOKE(GEODE_CONCAT(MODIFY, GEODE_NUMBER_OF_ARGS(__VA_ARGS__)), __VA_ARGS__)
+#define MODIFYNODE1(base) ALPHA_NODE_MODIFY_DECLARE(base, GEODE_CONCAT(hook, __LINE__))
+#define MODIFYNODE2(derived, base) ALPHA_NODE_MODIFY_DECLARE(base, derived)
 
-#define $objectModify(...) $nodeModify(__VA_ARGS__)
+#define $nodeModify(...) \
+    GEODE_INVOKE(GEODE_CONCAT(MODIFYNODE, GEODE_NUMBER_OF_ARGS(__VA_ARGS__)), __VA_ARGS__)
+
+#define $objectModify(...) \
+    GEODE_INVOKE(GEODE_CONCAT(MODIFY, GEODE_NUMBER_OF_ARGS(__VA_ARGS__)), __VA_ARGS__)

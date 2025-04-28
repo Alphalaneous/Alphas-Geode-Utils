@@ -1,3 +1,8 @@
+# 1.1.1
+- Separate Node and Object modify macros
+    - $nodeModify now has a base class of CCNode
+    - $objectModify has a base class of CCObject
+
 # 1.1.0
 - Fields and User Objects can now be used with CCObjects in the same way as CCNodes
 
