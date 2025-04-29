@@ -24,7 +24,7 @@ uint32_t allocateObjectData(ObjectData* data) {
 }
 
 void releaseObjectData(uint32_t id) {
-    if (id != 0 && id < s_objectArena.size() && s_objectArena[id]) {
+    if (id < s_objectArena.size() && s_objectArena[id]) {
         s_objectArena[id] = nullptr;
         s_freeArenaSlots.push(id);
     }
