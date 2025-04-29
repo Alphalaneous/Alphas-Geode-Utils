@@ -2,7 +2,6 @@
 
 #include <Geode/Geode.hpp>
 #include <Geode/modify/CCObject.hpp>
-#include <Geode/modify/CCScriptEngineManager.hpp>
 #include <Geode/cocos/cocoa/CCObject.h>
 #include "Fields.h"
 
@@ -41,10 +40,6 @@ class DummyScriptEngineProtocol : public cocos2d::CCScriptEngineProtocol {
     int executeEventWithArgs(int nHandler, cocos2d::CCArray* pArgs) { return 0; }
     bool handleAssert(const char *msg) { return false; };
     bool parseConfig(ConfigType type, const gd::string& str) { return false; };
-};
-
-struct ALPHA_UTILS_API_DLL MyCCScriptEngineManager : public geode::Modify<MyCCScriptEngineManager, cocos2d::CCScriptEngineManager> {
-    static cocos2d::CCScriptEngineManager* sharedManager();
 };
 
 class ObjectFieldContainer;

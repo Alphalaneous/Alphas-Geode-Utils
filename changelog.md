@@ -1,3 +1,6 @@
+# 1.1.2
+- Implement evil disable hook on exit thing that should maybe fix a MacOS crash idk, it could, we will have to see
+
 # 1.1.1
 - Separate Node and Object modify macros
     - $nodeModify now has a base class of CCNode

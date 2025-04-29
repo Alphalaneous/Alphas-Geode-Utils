@@ -5,6 +5,7 @@
 #include "../../include/Fields.h"
 #include <Geode/modify/CCObject.hpp>
 #include <queue>
+#include <Geode/modify/CCScriptEngineManager.hpp>
 
 using namespace geode::prelude;
 using namespace AlphaUtils;
@@ -34,14 +35,29 @@ void DummyScriptEngineProtocol::removeScriptObjectByCCObject(CCObject* pObj) {
     releaseObjectData(pObj->m_nLuaID);
 }
 
-CCScriptEngineManager* MyCCScriptEngineManager::sharedManager() {
-    auto ret = CCScriptEngineManager::sharedManager();
-    if (!ret->m_pScriptEngine) {
-        ret->setScriptEngine(new DummyScriptEngineProtocol());
+class $modify(MyCCScriptEngineManager, CCScriptEngineManager) {
+
+    static Hook* sharedEngineHook;
+
+    static void onModify(auto& self) {
+        Result<Hook*> hookRes = self.getHook("cocos2d::CCScriptEngineManager::sharedManager");
+        if (hookRes.isOk()) sharedEngineHook = hookRes.unwrap();
+        std::atexit([] {
+            if (sharedEngineHook) (void) sharedEngineHook->disable();
+        });
     }
 
-    return ret;
-}
+    static cocos2d::CCScriptEngineManager* sharedManager() {
+        auto ret = CCScriptEngineManager::sharedManager();
+        if (!ret->m_pScriptEngine) {
+            ret->setScriptEngine(new DummyScriptEngineProtocol());
+        }
+    
+        return ret;
+    }
+};
+
+Hook* MyCCScriptEngineManager::sharedEngineHook = nullptr;
 
 class $modify(CCObject) {
     CCObject* autorelease() {
@@ -101,4 +117,3 @@ CCObject* FieldCCObject::getUserObject(std::string const& id) {
     }
     return nullptr;
 }
-
