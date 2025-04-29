@@ -1,5 +1,8 @@
+# 1.1.3
+- Fix an oopsie
+
 # 1.1.2
-- Implement evil disable hook on exit thing that should maybe fix a MacOS crash idk, it could, we will have to see
+- Fix a leak and crash
 
 # 1.1.1
 - Separate Node and Object modify macros
