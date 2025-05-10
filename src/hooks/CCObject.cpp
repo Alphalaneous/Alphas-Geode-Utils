@@ -9,24 +9,35 @@
 using namespace geode::prelude;
 using namespace AlphaUtils;
 
-static std::vector<Ref<ObjectData>> s_objectArena;
-static std::queue<uint32_t> s_freeArenaSlots;
+std::vector<Ref<ObjectData>>& getObjectArena() {
+    static auto* arena = new std::vector<Ref<ObjectData>>();
+    return *arena;
+}
+
+std::queue<uint32_t>& getFreeSlots() {
+    static auto* slots = new std::queue<uint32_t>();
+    return *slots;
+}
 
 uint32_t allocateObjectData(ObjectData* data) {
-    if (!s_freeArenaSlots.empty()) {
-        uint32_t id = s_freeArenaSlots.front(); s_freeArenaSlots.pop();
-        s_objectArena[id] = data;
+    auto& arena = getObjectArena();
+    auto& slots = getFreeSlots();
+    if (!slots.empty()) {
+        uint32_t id = slots.front(); slots.pop();
+        arena[id] = data;
         return id;
     } else {
-        s_objectArena.push_back(data);
-        return static_cast<uint32_t>(s_objectArena.size() - 1);
+        arena.push_back(data);
+        return static_cast<uint32_t>(arena.size() - 1);
     }
 }
 
 void releaseObjectData(uint32_t id) {
-    if (id < s_objectArena.size() && s_objectArena[id]) {
-        s_objectArena[id] = nullptr;
-        s_freeArenaSlots.push(id);
+    auto& arena = getObjectArena();
+    auto& slots = getFreeSlots();
+    if (id < arena.size() && arena[id]) {
+        arena[id] = nullptr;
+        slots.push(id);
     }
 }
 
@@ -53,8 +64,9 @@ void FieldCCObject::tryCreateData() {
 
 ObjectData* FieldCCObject::getObjectData() {
     tryCreateData();
-    if (m_nLuaID < s_objectArena.size()) {
-        return s_objectArena[m_nLuaID];
+    auto& arena = getObjectArena();
+    if (m_nLuaID < arena.size()) {
+        return arena[m_nLuaID];
     }
     return nullptr;
 }
