@@ -4,8 +4,6 @@
 #include <string>
 #include <functional>
 #include <Geode/cocos/base_nodes/CCNode.h>
-#include "CCObject.h"
-#include "NodeModding.h"
 
 #ifdef GEODE_IS_WINDOWS
     #ifdef ALPHALANEOUS_UTILS_API_EXPORTING

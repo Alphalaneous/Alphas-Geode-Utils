@@ -1,3 +1,6 @@
+# 1.1.5
+- API fix
+
 # 1.1.4
 - Attempt to fix a crash
 

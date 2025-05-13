@@ -3,7 +3,6 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/CCObject.hpp>
 #include <Geode/cocos/cocoa/CCObject.h>
-#include "Fields.h"
 
 #ifdef GEODE_IS_WINDOWS
     #ifdef ALPHALANEOUS_UTILS_API_EXPORTING

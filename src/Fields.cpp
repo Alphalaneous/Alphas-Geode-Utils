@@ -1,5 +1,6 @@
 #include <Geode/Geode.hpp>
 #include "../include/Fields.h"
+#include "../include/CCObject.h"
 
 using namespace geode::prelude;
 
