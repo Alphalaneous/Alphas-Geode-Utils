@@ -35,6 +35,36 @@ ObjectModding* ObjectModding::get() {
     return instance;
 }
 
+std::unordered_map<std::string, std::vector<ModifyBaseInfo>> BaseModding::getBasesToModify() {
+    return m_basesToModify;
+}
+
+void BaseModding::addBaseToModify(std::string className, int prio, std::function<void(FieldCCObject*)> func) {
+    m_basesToModify[className].push_back({prio, func});
+}
+
+void BaseModding::handleBase(FieldCCObject* object) {
+    if (m_lock) return;
+    for (auto& [key, methods] : m_basesToModify) {
+        if (AlphaUtils::Cocos::checkBaseClassNames(object, key)) {
+            std::sort(methods.begin(), methods.end(), [](auto& left, auto& right) {
+                return left.priority < right.priority;
+            });
+            for (auto& pair : methods) {
+                pair.method(object);
+            }
+        }
+    }
+}
+
+BaseModding* BaseModding::get() {
+    static BaseModding* instance = nullptr;
+    if (!instance) {
+        instance = new BaseModding();
+    }
+    return instance;
+}
+
 std::unordered_map<std::string, std::vector<ModifyInfo>> NodeModding::getNodesToModify() {
     return m_nodesToModify;
 }

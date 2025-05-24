@@ -5,6 +5,7 @@
 #include <Geode/cocos/base_nodes/CCNode.h>
 #include <Geode/cocos/include/CCProtocols.h>
 #include <Geode/utils/cocos.hpp>
+#include <Geode/utils/casts.hpp>
 #include <random>
 
 #define public_cast(value, member) [](auto* v) { \
@@ -46,6 +47,67 @@ namespace AlphaUtils {
             }
 
             return ret;
+        }
+
+        static inline bool checkBaseClassNames(cocos2d::CCObject* obj, const std::string& name) {
+            if (!obj) return false;
+
+            auto basePtr = dynamic_cast<void*>(obj);
+            auto vftable = *reinterpret_cast<geode::cast::VftableType**>(basePtr);
+
+            auto metaPtr = static_cast<geode::cast::MetaPointerType*>(static_cast<geode::cast::CompleteVftableType*>(vftable));
+
+        #ifdef GEODE_IS_X64
+            auto locatorOffset = metaPtr->m_completeLocator->m_locatorOffset;
+            auto base = reinterpret_cast<uintptr_t>(metaPtr->m_completeLocator) - locatorOffset;
+        #else
+            auto base = 0;
+        #endif
+
+            auto classDesc = metaPtr->m_completeLocator->m_classDescriptor.into(base);
+            auto baseClassArray = classDesc->m_baseClassArray.into(base);
+            for (int32_t i = 0; i < classDesc->m_numBaseClasses; ++i) {
+                auto descriptorEntry = baseClassArray->m_descriptorEntries[i].into(base);
+                auto typeDesc = descriptorEntry->m_typeDescriptor.into(base);
+                auto optionIdent = static_cast<char const*>(
+                    typeDesc->m_typeDescriptorName
+                );
+                
+                if (std::strcmp(name.c_str(), optionIdent) == 0) {
+                    return true;
+                }
+            }
+      
+            return false;
+        }
+
+        template <class T>
+        static inline T getObject() {
+            static T obj;
+            return obj;
+        }
+
+        template <class T>
+        static inline std::string getClassNameByType() {
+            auto basePtr = dynamic_cast<void*>(getObject<T>());
+            auto vftable = *reinterpret_cast<geode::cast::VftableType**>(basePtr);
+
+            auto metaPtr = static_cast<geode::cast::MetaPointerType*>(static_cast<geode::cast::CompleteVftableType*>(vftable));
+
+        #ifdef GEODE_IS_X64
+            auto locatorOffset = metaPtr->m_completeLocator->m_locatorOffset;
+            auto base = reinterpret_cast<uintptr_t>(metaPtr->m_completeLocator) - locatorOffset;
+        #else
+            auto base = 0;
+        #endif
+
+            auto classDesc = metaPtr->m_completeLocator->m_classDescriptor.into(base);
+            auto entry = classDesc->m_baseClassArray.into(base)->m_descriptorEntries[0].into(base);
+            auto optionIdent = static_cast<char const*>(
+                entry->m_typeDescriptor.into(base)->m_typeDescriptorName
+            );
+ 
+            return optionIdent;
         }
 
         //getChildByType but using a string instead for dynamic use.

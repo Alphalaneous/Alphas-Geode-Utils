@@ -50,6 +50,7 @@ class $modify(CCObject) {
         FieldCCObject* obj = reinterpret_cast<FieldCCObject*>(this);
         obj->tryCreateData();
         ObjectModding::get()->handleObject(obj);
+        BaseModding::get()->handleBase(obj);
         return CCObject::autorelease();
     }
 };
