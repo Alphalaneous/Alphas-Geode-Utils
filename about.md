@@ -45,34 +45,6 @@ class $nodeModify(MyCustomCreatorLayer, CustomCreatorLayer) {
 };
 ```
 
-## Modifying Base Classes of CCNodes
-
-Using $baseModify, you can modify all nodes that inheret some class. In the following example, we modify all FLAlertLayers, not just FLAlertLayer itself. These are different than the above $nodeModify and $cobjectModify, as it requires a valid type to be passed in, thus it does not natively support modifying other mod's nodes without declaring the class beforehand.
-
-```c++
-class $baseModify(MyFLAlertLayer, FLAlertLayer) {
-
-	void modify() {
-		setScale(2.f);
-	}
-
-}
-```
-
-If you still wish to modify another mod's nodes by their base class, you can do the following.
-Let's say we had a node called AlphasEpicNode, which in itself inherets CCNode, that a lot of nodes from AlphasEpicMod inherit. Because we are defining it beforehand (make sure the definition matches that of how it is in said mod), the mod can deduce it and it's own base class names and it will work as expected.
-
-```c++
-class AlphasEpicNode : public CCNode {};
-class $baseModify(MyAlphasEpicNode, AlphasEpicNode) {
-
-	void modify() {
-		setScale(2.f);
-	}
-
-}
-```
-
 ## General Utils
 
 ### AlphaUtils::Cocos namespace:

@@ -49,7 +49,7 @@ namespace AlphaUtils {
             return ret;
         }
 
-        static inline bool checkBaseClassNames(cocos2d::CCObject* obj, const std::string& name) {
+        /*static inline bool checkBaseClassNames(cocos2d::CCObject* obj, const std::string& name) {
             if (!obj) return false;
 
             auto basePtr = dynamic_cast<void*>(obj);
@@ -108,7 +108,7 @@ namespace AlphaUtils {
             );
  
             return optionIdent;
-        }
+        }*/
 
         //getChildByType but using a string instead for dynamic use.
         static inline std::optional<cocos2d::CCNode*> getChildByClassName(cocos2d::CCNode* node, std::string name, int index = 0) {

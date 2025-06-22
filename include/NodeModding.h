@@ -54,7 +54,7 @@ namespace AlphaUtils {
         }
     };
 
-    struct ModifyBaseInfo {
+    /*struct ModifyBaseInfo {
         int priority;
         std::function<void(FieldCCObject*)> method;
     };
@@ -86,7 +86,7 @@ namespace AlphaUtils {
                 BaseModding::get()->m_lock = false;
             });
         }
-    };
+    };*/
 
     //remnants for compat
     struct ModifyInfo {
@@ -140,14 +140,14 @@ class GEODE_CONCAT(GEODE_CONCAT(derived, Hook), __LINE__) : AlphaUtils::NodeWrap
 };\
 struct derived : AlphaUtils::NodeWrapper<derived>
 
-#define ALPHA_BASE_MODIFY_DECLARE(base, derived) \
+/*#define ALPHA_BASE_MODIFY_DECLARE(base, derived) \
 GEODE_CONCAT(GEODE_CONCAT(derived, __LINE__), Dummy);\
 struct derived;\
 class GEODE_CONCAT(GEODE_CONCAT(derived, Hook), __LINE__) : AlphaUtils::BaseWrapper<derived, base> {\
     private:\
     static inline AlphaUtils::ModifyBaseLoad<derived, base> s_apply{};\
 };\
-struct derived : AlphaUtils::BaseWrapper<derived, base>
+struct derived : AlphaUtils::BaseWrapper<derived, base>*/
 
 #define MODIFY1(base) ALPHA_MODIFY_DECLARE(base, GEODE_CONCAT(hook, __LINE__))
 #define MODIFY2(derived, base) ALPHA_MODIFY_DECLARE(base, derived)
@@ -155,8 +155,8 @@ struct derived : AlphaUtils::BaseWrapper<derived, base>
 #define MODIFYNODE1(base) ALPHA_NODE_MODIFY_DECLARE(base, GEODE_CONCAT(hook, __LINE__))
 #define MODIFYNODE2(derived, base) ALPHA_NODE_MODIFY_DECLARE(base, derived)
 
-#define MODIFYBASE1(base) ALPHA_BASE_MODIFY_DECLARE(base, GEODE_CONCAT(hook, __LINE__))
-#define MODIFYBASE2(derived, base) ALPHA_BASE_MODIFY_DECLARE(base, derived)
+/*#define MODIFYBASE1(base) ALPHA_BASE_MODIFY_DECLARE(base, GEODE_CONCAT(hook, __LINE__))
+#define MODIFYBASE2(derived, base) ALPHA_BASE_MODIFY_DECLARE(base, derived)*/
 
 #define $nodeModify(...) \
     GEODE_INVOKE(GEODE_CONCAT(MODIFYNODE, GEODE_NUMBER_OF_ARGS(__VA_ARGS__)), __VA_ARGS__)
@@ -164,5 +164,5 @@ struct derived : AlphaUtils::BaseWrapper<derived, base>
 #define $objectModify(...) \
     GEODE_INVOKE(GEODE_CONCAT(MODIFY, GEODE_NUMBER_OF_ARGS(__VA_ARGS__)), __VA_ARGS__)
 
-#define $baseModify(...) \
-    GEODE_INVOKE(GEODE_CONCAT(MODIFYBASE, GEODE_NUMBER_OF_ARGS(__VA_ARGS__)), __VA_ARGS__)
+/*#define $baseModify(...) \
+    GEODE_INVOKE(GEODE_CONCAT(MODIFYBASE, GEODE_NUMBER_OF_ARGS(__VA_ARGS__)), __VA_ARGS__)*/

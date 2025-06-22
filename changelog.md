@@ -1,3 +1,7 @@
+# 1.1.6
+- iOS rebuild
+- New icon
+
 # 1.1.5
 - API fix
 

@@ -35,7 +35,7 @@ ObjectModding* ObjectModding::get() {
     return instance;
 }
 
-std::unordered_map<std::string, std::vector<ModifyBaseInfo>> BaseModding::getBasesToModify() {
+/*std::unordered_map<std::string, std::vector<ModifyBaseInfo>> BaseModding::getBasesToModify() {
     return m_basesToModify;
 }
 
@@ -63,7 +63,7 @@ BaseModding* BaseModding::get() {
         instance = new BaseModding();
     }
     return instance;
-}
+}*/
 
 std::unordered_map<std::string, std::vector<ModifyInfo>> NodeModding::getNodesToModify() {
     return m_nodesToModify;
