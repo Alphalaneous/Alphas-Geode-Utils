@@ -1,3 +1,6 @@
+# 1.1.7
+- Fix a Cocos2d-x 2.2.3 bug where for some godforsaken reason, autorelease can be called on a nullptr in CCDictionary::createWithContentsOfFile. Thank you cocos devs :)
+
 # 1.1.6
 - iOS rebuild
 - New icon
