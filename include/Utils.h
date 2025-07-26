@@ -32,18 +32,31 @@ namespace AlphaUtils {
             std::string ret;
 
         #ifdef GEODE_IS_WINDOWS
-            ret = typeid(*obj).name() + 6;
+            ret = typeid(*obj).name();
+            constexpr std::string_view classPrefix = "class ";
+            constexpr std::string_view structPrefix = "struct ";
+
+            auto removeAll = [](std::string& str, std::string_view prefix) {
+                size_t pos = 0;
+                while ((pos = str.find(prefix, pos)) != std::string::npos) {
+                    str.erase(pos, prefix.size());
+                }
+            };
+
+            removeAll(ret, classPrefix);
+            removeAll(ret, structPrefix);
         #else 
             int status = 0;
-            auto demangle = abi::__cxa_demangle(typeid(*obj).name(), 0, 0, &status);
-            if (status == 0) {
-                ret = demangle;
+            auto demangled = abi::__cxa_demangle(typeid(*obj).name(), nullptr, nullptr, &status);
+            if (status == 0 && demangled) {
+                ret = demangled;
             }
-            free(demangle);
+            free(demangled);
         #endif
             if (removeNamespace) {
-                std::vector<std::string> colonSplit = geode::utils::string::split(ret, "::");
-                ret = colonSplit[colonSplit.size()-1];
+                if (auto pos = ret.rfind("::"); pos != std::string::npos) {
+                    ret = ret.substr(pos + 2);
+                }
             }
 
             return ret;
@@ -112,35 +125,29 @@ namespace AlphaUtils {
 
         //getChildByType but using a string instead for dynamic use.
         static inline std::optional<cocos2d::CCNode*> getChildByClassName(cocos2d::CCNode* node, std::string name, int index = 0) {
-            size_t indexCounter = 0;
+            if (!node || node->getChildrenCount() == 0) return nullptr;
 
-            if (!node || node->getChildrenCount() == 0) return std::nullopt;
-            // start from end for negative index
-            if (index < 0) {
-                index = -index - 1;
-                for (size_t i = node->getChildrenCount() - 1; i >= 0; i--) {
-                    cocos2d::CCNode* idxNode = static_cast<cocos2d::CCNode*>(node->getChildren()->objectAtIndex(i));
-                    std::string className = getClassName(idxNode);
-                    if (className == name) {
-                        if (indexCounter == index) {
-                            return idxNode;
-                        }
-                        ++indexCounter;
-                    }
-                    if (i == 0) break;
-                }
+            size_t indexCounter = 0;
+            const size_t childrenCount = node->getChildrenCount();
+
+            bool isNegativeIndex = (index < 0);
+            if (isNegativeIndex) {
+                index = -index - 1; 
             }
-            else {
-                for (size_t i = 0; i < node->getChildrenCount(); i++) {
-                    cocos2d::CCNode* idxNode = static_cast<cocos2d::CCNode*>(node->getChildren()->objectAtIndex(i));
-                    std::string className = getClassName(idxNode);
-                    if (className == name) {
-                        if (indexCounter == index) {
-                            return idxNode;
-                        }
-                        ++indexCounter;
+
+            for (size_t i = (isNegativeIndex ? childrenCount - 1 : 0); 
+                isNegativeIndex ? i >= 0 : i < childrenCount; 
+                isNegativeIndex ? --i : ++i) {
+
+                cocos2d::CCNode* idxNode = static_cast<cocos2d::CCNode*>(node->getChildren()->objectAtIndex(i));
+                if (AlphaUtils::Cocos::getClassName(idxNode, true) == name) {
+                    if (indexCounter == index) {
+                        return idxNode;
                     }
+                    ++indexCounter;
                 }
+
+                if (isNegativeIndex && i == 0) break;
             }
 
             return std::nullopt;
@@ -162,7 +169,7 @@ namespace AlphaUtils {
             return spr;
         }
 
-        template <typename Layer>
+        template <typename Layer, typename = std::enable_if_t<std::is_pointer_v<Layer>>>
         static inline std::optional<Layer> getLayer() {
 
             auto scene = cocos2d::CCDirector::sharedDirector()->getRunningScene();
