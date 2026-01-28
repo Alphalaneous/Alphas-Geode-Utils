@@ -1,3 +1,10 @@
+# 1.2.0
+- Cleanup everything
+- Added $classModify to use a base class instead of CCNode or CCObject
+- `modify` method is not required anymore if you wish to merely use fields
+- Removed some redundant utils that are now in Geode
+- Added templated `getObjectName` method
+
 # 1.1.8
 - Quick fixes you'll never see as an end user
 - Code cleanup

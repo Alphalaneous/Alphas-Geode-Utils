@@ -9,9 +9,13 @@ You can name the modified node/object the same way as well `class $objectModify(
 
 $nodeModify and $objectModify do the same thing, except $nodeModify is a base of CCNode while $objectModify is a base of CCObject
 
+There is also $classModify which will use the base class you pass in instead of a generic CCNode or CCObject. `class $classModify(MyMenuLayer, MenuLayer)`
+
 To use this, you will create a `void modify()` method within that class and inside of there you can change the node to your hearts content. You can use the fields struct just like in Geode to add fields if needed. 
 
 To edit the priority (lets say another mod modifies the same node using this) you can add `static int modifyPrio()` to the class which should return an integer value that is the priority you wish to set. 
+
+Include `ObjectModify.hpp` to access these macros.
 
 **Full Example modifying BetterInfo's CustomCreatorLayer:**
 
@@ -47,7 +51,9 @@ class $nodeModify(MyCustomCreatorLayer, CustomCreatorLayer) {
 
 ## General Utils
 
-### AlphaUtils::Cocos namespace:
+Include `Utils.hpp` to access these utils.
+
+### alpha::utils::cocos namespace:
 
 Getting sprites while ignoring Texture Loader fallback:
 `std::optional<cocos2d::CCSprite*> getSprite(const char* sprName)`
@@ -66,10 +72,5 @@ Checking if a parent node contains a node anywhere in a tree:
 Getting a child by class name dynamically:
 `std::optional<cocos2d::CCNode*> getChildByClassName(cocos2d::CCNode* node, std::string name, int index = 0)`
 
-Getting a node's class name:
-`std::string getClassName(cocos2d::CCObject* obj, bool removeNamespace = false)`
-
-### AlphaUtils::Misc namespace:
-
-Getting a random number:
-`int getRandomNumber(int lower, int upper)`
+Getting an objects class name by template:
+`std::string_view getObjectName<T>()`
