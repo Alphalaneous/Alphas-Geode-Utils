@@ -17,7 +17,7 @@ namespace alpha::utils {
     struct ModifyCCObject : public Base {
         
         void setUserObject(geode::ZStringView id, cocos2d::CCObject* value) {
-            auto meta = ObjectMetadata::set(this);
+            auto meta = ObjectMetadata::set(reinterpret_cast<ModifyCCObject<cocos2d::CCObject>*>(this));
             if (value) {
                 meta->m_userObjects[id] = value;
             }
@@ -27,7 +27,7 @@ namespace alpha::utils {
         }
 
         cocos2d::CCObject* getUserObject(geode::ZStringView id) {
-            auto meta = ObjectMetadata::set(this);
+            auto meta = ObjectMetadata::set(reinterpret_cast<ModifyCCObject<cocos2d::CCObject>*>(this));
             if (meta->m_userObjects.count(id)) {
                 return meta->m_userObjects.at(id);
             }

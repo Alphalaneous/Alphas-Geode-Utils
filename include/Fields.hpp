@@ -47,7 +47,7 @@ namespace alpha::utils {
 
         void* getField(size_t index);
         void* setField(size_t index, size_t size, std::function<void(void*)> destructor);
-        static ObjectFieldContainer* from(ModifyCCObject<cocos2d::CCObject>* object, char const* forClass);
+        static ObjectFieldContainer* from(cocos2d::CCObject* object, char const* forClass);
     };
 
     size_t getFieldIndexForClass(char const* name);
@@ -61,7 +61,7 @@ namespace alpha::utils {
 
         virtual ~ObjectMetadata();
 
-        static ObjectMetadata* set(ModifyCCObject<cocos2d::CCObject>* target);
+        static ObjectMetadata* set(cocos2d::CCObject* target);
 
         ObjectFieldContainer* getFieldContainer(char const* forClass);
     };
@@ -84,7 +84,7 @@ namespace alpha::utils {
         }
 
         auto self() {
-            auto object = reinterpret_cast<ModifyCCObject<cocos2d::CCObject>*>(reinterpret_cast<std::byte*>(this) - sizeof(Base));
+            auto object = reinterpret_cast<cocos2d::CCObject*>(reinterpret_cast<std::byte*>(this) - sizeof(Base));
             auto container = ObjectFieldContainer::from(object, typeid(Base).name());
 
             static size_t index = geode::modifier::getFieldIndexForClass(typeid(Base).name());

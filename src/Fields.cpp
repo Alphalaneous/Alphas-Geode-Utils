@@ -28,8 +28,8 @@ void* ObjectFieldContainer::setField(size_t index, size_t size, std::function<vo
     return m_containedFields.at(index);
 }
 
-ObjectFieldContainer* ObjectFieldContainer::from(ModifyCCObject<CCObject>* object, char const* forClass) {
-    return object->getFieldContainer(forClass);
+ObjectFieldContainer* ObjectFieldContainer::from(cocos2d::CCObject* object, char const* forClass) {
+    return reinterpret_cast<ModifyCCObject<cocos2d::CCObject>*>(object)->getFieldContainer(forClass);
 }
 
 ObjectMetadata::ObjectMetadata() {}
@@ -40,10 +40,12 @@ ObjectMetadata::~ObjectMetadata() {
     }
 }
 
-ObjectMetadata* ObjectMetadata::set(ModifyCCObject<CCObject>* target) {
+ObjectMetadata* ObjectMetadata::set(cocos2d::CCObject* target) {
     if (!target) return nullptr;
 
-    auto old = target->getUserObject();
+    auto obj = reinterpret_cast<ModifyCCObject<cocos2d::CCObject>*>(target);
+
+    auto old = obj->getUserObject();
     if (old && old->getTag() == METADATA_TAG) {
         return static_cast<ObjectMetadata*>(old);
     }
@@ -51,7 +53,7 @@ ObjectMetadata* ObjectMetadata::set(ModifyCCObject<CCObject>* target) {
     meta->autorelease();
     meta->setTag(METADATA_TAG);
 
-    target->setUserObject(meta);
+    obj->setUserObject(meta);
     meta->retain();
 
     if (old) {
