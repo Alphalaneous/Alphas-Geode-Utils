@@ -13,7 +13,7 @@
 	"description": "Miscellaneous utilities for Geode Modding",
 	"api": {
         "include": [
-            "include/*.h"
+            "include/*.hpp"
         ]
     },
 	"early-load": true,
