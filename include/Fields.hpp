@@ -66,12 +66,12 @@ namespace alpha::utils {
         ObjectFieldContainer* getFieldContainer(char const* forClass);
     };
 
-    template <class, class>
+    template <class, class, geode::utils::string::ConstexprString, bool>
     struct ObjectWrapper;
 
-    template <class Parent, class Base>
+    template <class Parent, class Base, geode::utils::string::ConstexprString BaseStr, bool UsesStr>
     class ObjectFieldIntermediate {
-        using Intermediate = alpha::utils::ObjectWrapper<Parent, Base>;
+        using Intermediate = alpha::utils::ObjectWrapper<Parent, Base, BaseStr, UsesStr>;
         alignas(Base) std::array<std::byte, alignof(Base)> m_padding;
         
     public:

@@ -5,6 +5,7 @@
 #include <Geode/utils/StringMap.hpp>
 #include <Geode/utils/ZStringView.hpp>
 #include <Geode/cocos/cocoa/CCObject.h>
+#include <Geode/utils/string.hpp>
 #include "ModifyCCObject.hpp"
 #include "Fields.hpp"
 #include "Utils.hpp"
@@ -30,15 +31,6 @@ namespace alpha::utils {
         std::function<void(ModifyCCObject<cocos2d::CCObject>*)> method;
     };
 
-    template <class Derived, class Base>
-    struct ObjectWrapper : public ModifyCCObject<Base> {
-        using Self = Derived;
-
-        ObjectFieldIntermediate<Derived, Base> m_fields;
-        static int modifyPrio() { return 0; }
-        void modify() {}
-    };
-
     class ALPHA_UTILS_API_DLL ObjectModify {
     protected:
         geode::utils::StringMap<std::vector<ObjectModifyInfo>> m_objectsToModify;
@@ -49,76 +41,60 @@ namespace alpha::utils {
         void handleObject(ModifyCCObject<cocos2d::CCObject>* object);
 
         template <class, class>
-        friend class ObjectModifyLoad;
-        template <class, class>
         friend class ClassModifyLoad;
         friend class ModifyHandler;
     };
 
     template <class Derived, class Base>
-    class ObjectModifyLoad {
+    class ClassModifyLoad {
     public:
-        ObjectModifyLoad(geode::ZStringView str) {
-            ObjectModify::get()->addObjectToModify(str, Derived::modifyPrio(), [](ModifyCCObject<cocos2d::CCObject>* self) {
+        ClassModifyLoad(geode::ZStringView str, bool useStr) {
+            std::string name;
+            if (useStr) name = str;
+            else name = alpha::utils::cocos::getObjectName<Base>();
+
+            ObjectModify::get()->addObjectToModify(name, Derived::modifyPrio(), [](ModifyCCObject<cocos2d::CCObject>* self) {
                 reinterpret_cast<Derived*>(reinterpret_cast<Base*>(self))->modify();
             });
         }
     };
 
-    template <class Derived, class Base>
-    class ClassModifyLoad {
-    public:
-        ClassModifyLoad() {
-            auto str = alpha::utils::cocos::getObjectName<Base>();
-            ObjectModify::get()->addObjectToModify(std::string(str), Derived::modifyPrio(), [](ModifyCCObject<cocos2d::CCObject>* self) {
-                reinterpret_cast<Derived*>(reinterpret_cast<Base*>(self))->modify();
-            });
-        }
+    template <class Derived, class Base, geode::utils::string::ConstexprString BaseStr, bool UsesStr>
+    struct ObjectWrapper : public ModifyCCObject<Base> {
+        private:
+        static inline ClassModifyLoad<Derived, Base> s_apply{BaseStr.data(), UsesStr};
+        static inline auto s_applyRef = &ObjectWrapper::s_apply;
+
+        public:
+        using Self = Derived;
+
+        ObjectFieldIntermediate<Derived, Base, BaseStr, UsesStr> m_fields;
+        static int modifyPrio() { return 0; }
+        void modify() {}
     };
 }
 
-//yoinked a lot of this from geode
-#define ALPHA_MODIFY_DECLARE(base, derived) \
-GEODE_CONCAT(GEODE_CONCAT(derived, __LINE__), Dummy);\
-struct derived;\
-class GEODE_CONCAT(GEODE_CONCAT(derived, Hook), __LINE__) : alpha::utils::ObjectWrapper<derived, cocos2d::CCObject> {\
-    private:\
-    static inline alpha::utils::ObjectModifyLoad<derived, cocos2d::CCObject> s_apply{#base};\
-};\
-struct derived : alpha::utils::ObjectWrapper<derived, cocos2d::CCObject>
+#define ALPHA_MODIFY(baseStr, derived, baseType, useStr) \
+    GEODE_CONCAT(derived, Dummy);                        \
+    struct derived : alpha::utils::ObjectWrapper<derived, baseType, #baseStr, useStr>
 
-#define MODIFY1(base) ALPHA_MODIFY_DECLARE(base, GEODE_CONCAT(hook, __LINE__))
-#define MODIFY2(derived, base) ALPHA_MODIFY_DECLARE(base, derived)
+#define ALPHA_MODIFY_AUTO(baseStr, baseType, useStr) \
+    ALPHA_MODIFY(baseStr, GEODE_CONCAT(hook, __LINE__), baseType, useStr)
 
-#define ALPHA_NODE_MODIFY_DECLARE(base, derived) \
-GEODE_CONCAT(GEODE_CONCAT(derived, __LINE__), Dummy);\
-struct derived;\
-class GEODE_CONCAT(GEODE_CONCAT(derived, Hook), __LINE__) : alpha::utils::ObjectWrapper<derived, cocos2d::CCNode> {\
-    private:\
-    static inline alpha::utils::ObjectModifyLoad<derived, cocos2d::CCNode> s_apply{#base};\
-};\
-struct derived : alpha::utils::ObjectWrapper<derived, cocos2d::CCNode>
+#define MODIFY1(base)          ALPHA_MODIFY_AUTO(base, cocos2d::CCObject, true)
+#define MODIFY2(derived, base) ALPHA_MODIFY(base, derived, cocos2d::CCObject, true)
 
-#define MODIFYNODE1(base) ALPHA_NODE_MODIFY_DECLARE(base, GEODE_CONCAT(hook, __LINE__))
-#define MODIFYNODE2(derived, base) ALPHA_NODE_MODIFY_DECLARE(base, derived)
+#define MODIFYNODE1(base)          ALPHA_MODIFY_AUTO(base, cocos2d::CCNode, true)
+#define MODIFYNODE2(derived, base) ALPHA_MODIFY(base, derived, cocos2d::CCNode, true)
 
-#define ALPHA_CLASS_MODIFY_DECLARE(base, derived) \
-GEODE_CONCAT(GEODE_CONCAT(derived, __LINE__), Dummy);\
-struct derived;\
-class GEODE_CONCAT(GEODE_CONCAT(derived, Hook), __LINE__) : alpha::utils::ObjectWrapper<derived, base> {\
-    private:\
-    static inline alpha::utils::ClassModifyLoad<derived, base> s_apply{};\
-};\
-struct derived : alpha::utils::ObjectWrapper<derived, base>
-
-#define MODIFYCLASS1(base) ALPHA_CLASS_MODIFY_DECLARE(base, GEODE_CONCAT(hook, __LINE__))
-#define MODIFYCLASS2(derived, base) ALPHA_CLASS_MODIFY_DECLARE(base, derived)
-
-#define $nodeModify(...) \
-    GEODE_INVOKE(GEODE_CONCAT(MODIFYNODE, GEODE_NUMBER_OF_ARGS(__VA_ARGS__)), __VA_ARGS__)
+#define MODIFYCLASS1(base)          ALPHA_MODIFY_AUTO(base, base, false)
+#define MODIFYCLASS2(derived, base) ALPHA_MODIFY(base, derived, base, false)
 
 #define $objectModify(...) \
     GEODE_INVOKE(GEODE_CONCAT(MODIFY, GEODE_NUMBER_OF_ARGS(__VA_ARGS__)), __VA_ARGS__)
+
+#define $nodeModify(...) \
+    GEODE_INVOKE(GEODE_CONCAT(MODIFYNODE, GEODE_NUMBER_OF_ARGS(__VA_ARGS__)), __VA_ARGS__)
 
 #define $classModify(...) \
     GEODE_INVOKE(GEODE_CONCAT(MODIFYCLASS, GEODE_NUMBER_OF_ARGS(__VA_ARGS__)), __VA_ARGS__)

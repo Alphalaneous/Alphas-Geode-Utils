@@ -42,34 +42,30 @@ namespace alpha::utils {
         template <class T>
         static inline std::string_view getObjectName() {
         #ifdef GEODE_IS_WINDOWS
-            std::string_view tname = typeid(T).name();
-            if (tname.starts_with("class ")) {
-                tname.remove_prefix(6);
-            } else if (tname.starts_with("struct ")) {
-                tname.remove_prefix(7);
-            }
-
-            return tname;
+            static const std::string name = []() {
+                std::string_view tname = typeid(T).name();
+                if (tname.starts_with("class ")) {
+                    tname.remove_prefix(6);
+                } else if (tname.starts_with("struct ")) {
+                    tname.remove_prefix(7);
+                }
+                return std::string(tname);
+            }();
+            return name;
         #else
-            static std::unordered_map<std::type_index, std::string> s_typeNames;
-            std::type_index key = typeid(T);
-
-            auto it = s_typeNames.find(key);
-            if (it != s_typeNames.end()) {
-                return it->second;
-            }
-
-            std::string ret;
-
-            int status = 0;
-            auto demangle = abi::__cxa_demangle(typeid(T).name(), 0, 0, &status);
-            if (status == 0) {
-                ret = demangle;
-            }
-            free(demangle);
-            auto [iter, _] = s_typeNames.insert({key, std::move(ret)});
-
-            return iter->second;
+            static const std::string name = []() {
+                int status = 0;
+                char* demangled = abi::__cxa_demangle(typeid(T).name(), nullptr, nullptr, &status);
+                std::string ret;
+                if (status == 0 && demangled) {
+                    ret = demangled;
+                } else {
+                    ret = typeid(T).name();
+                }
+                free(demangled);
+                return ret;
+            }();
+            return name;
         #endif
         }
 
