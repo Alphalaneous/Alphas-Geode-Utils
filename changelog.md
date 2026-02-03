@@ -1,4 +1,4 @@
-# 1.2.0
+# 1.2.0-beta.1
 - Cleanup everything
 - Added $classModify to use a base class instead of CCNode or CCObject
 - `modify` method is not required anymore if you wish to merely use fields
