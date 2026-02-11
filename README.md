@@ -22,31 +22,45 @@ Include `ObjectModify.hpp` to access these macros.
 ```c++
 class $nodeModify(MyCustomCreatorLayer, CustomCreatorLayer) {
 
-	static int modifyPrio() {
-		return 10;
-	}
+    static int modifyPrio() {
+        return 10;
+    }
 
-	struct Fields {
-		int m_number = 0;
-	};
+    struct Fields {
+        int m_number = 0;
+    };
 
-	void modify() {
-		
-		CCSprite* spr = CCSprite::createWithSpriteFrameName("GJ_playBtn_001.png");
-		CCMenuItemSpriteExtra* btn = CCMenuItemSpriteExtra::create(spr, this, menu_selector(MyCustomCreatorLayer::onEpicButton));
-		btn->setID("epic-button"_spr);
+    void modify() {
+        
+        CCSprite* spr = CCSprite::createWithSpriteFrameName("GJ_playBtn_001.png");
+        CCMenuItemSpriteExtra* btn = CCMenuItemSpriteExtra::create(spr, this, menu_selector(MyCustomCreatorLayer::onEpicButton));
+        btn->setID("epic-button"_spr);
 
-		if (CCMenu* creatorButtonsMenu = typeinfo_cast<CCMenu*>(getChildByID("cvolton.betterinfo/creator-buttons-menu"))) {
-			creatorButtonsMenu->addChild(btn);
-			creatorButtonsMenu->updateLayout();
-		}
-	}
+        if (CCMenu* creatorButtonsMenu = typeinfo_cast<CCMenu*>(getChildByID("cvolton.betterinfo/creator-buttons-menu"))) {
+            creatorButtonsMenu->addChild(btn);
+            creatorButtonsMenu->updateLayout();
+        }
+    }
 
-	void onEpicButton(CCObject* obj) {
-		log::info("m_number {}", m_fields->m_number);
-		m_fields->m_number++;
-	}
+    void onEpicButton(CCObject* obj) {
+        log::info("m_number {}", m_fields->m_number);
+        m_fields->m_number++;
+    }
 };
+```
+
+There's also a useful utility for modifying all classes with a specific Base class. `class $baseModify(SomeClass)`
+
+It works just like above:
+
+```cpp
+class $baseModify(MyFLAlertLayer, FLAlertLayer) {
+
+    void modify() {
+        m_noElasticity = true;
+        m_mainLayer->setScale(0.5f);
+    }
+}
 ```
 
 ## General Utils

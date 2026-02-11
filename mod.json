@@ -1,5 +1,5 @@
 {
-	"geode": "5.0.0-alpha.1",
+	"geode": "5.0.0-alpha.2",
 	"gd": {
 		"win": "2.2081",
 		"android": "2.2081",
@@ -8,7 +8,7 @@
 	},
 	"id": "alphalaneous.alphas_geode_utils",
 	"name": "Alpha's Geode Utils",
-	"version": "v1.2.0-beta.1",
+	"version": "v1.2.0-beta.2",
 	"developer": "Alphalaneous",
 	"description": "Miscellaneous utilities for Geode Modding",
 	"api": {

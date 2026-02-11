@@ -1,3 +1,8 @@
+# 1.2.0-beta.2
+- Geode Alpha 2 support
+- Performance Improvements
+- Added $baseModify
+
 # 1.2.0-beta.1
 - Cleanup everything
 - Added $classModify to use a base class instead of CCNode or CCObject

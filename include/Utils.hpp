@@ -40,20 +40,21 @@ namespace alpha::utils {
         }
 
         template <class T>
-        static inline std::string_view getObjectName() {
+        static inline geode::ZStringView getObjectName() {
         #ifdef GEODE_IS_WINDOWS
-            static const std::string name = []() {
-                std::string_view tname = typeid(T).name();
-                if (tname.starts_with("class ")) {
-                    tname.remove_prefix(6);
-                } else if (tname.starts_with("struct ")) {
-                    tname.remove_prefix(7);
+            static const std::string name = [] {
+                const char* name = typeid(T).name();
+                if (std::strncmp(name, "class ", 6) == 0) {
+                    name += 6;
+                } else if (std::strncmp(name, "struct ", 7) == 0) {
+                    name += 7;
                 }
-                return std::string(tname);
+
+                return name;
             }();
             return name;
         #else
-            static const std::string name = []() {
+            static const std::string name = [] {
                 int status = 0;
                 char* demangled = abi::__cxa_demangle(typeid(T).name(), nullptr, nullptr, &status);
                 std::string ret;
