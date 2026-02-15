@@ -1,3 +1,6 @@
+# 1.2.0
+- Move out of beta
+
 # 1.2.0-beta.2
 - Geode Alpha 2 support
 - Performance Improvements
