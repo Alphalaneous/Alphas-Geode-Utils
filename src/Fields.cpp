@@ -54,7 +54,6 @@ ObjectMetadata* ObjectMetadata::set(cocos2d::CCObject* target) {
     meta->setTag(METADATA_TAG);
 
     obj->setUserObject(meta);
-    meta->retain();
 
     if (old) {
         meta->m_userObjects.insert({ "", old });

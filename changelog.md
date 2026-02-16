@@ -1,3 +1,6 @@
+# 1.2.1
+- Fixed a bug that leaked user objects and fields
+
 # 1.2.0
 - Move out of beta
 
