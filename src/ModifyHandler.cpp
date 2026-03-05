@@ -47,8 +47,6 @@ ZStringView getObjectNameOptimized(const cocos2d::CCObject* obj) {
 #endif
 }
 
-
-
 ModifyHandler* ModifyHandler::get() {
     static ModifyHandler handler;
     return &handler;

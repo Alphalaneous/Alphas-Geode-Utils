@@ -7,7 +7,7 @@
 #include <Geode/utils/string.hpp>
 #include "ModifyCCObject.hpp"
 #include "Fields.hpp"
-#include "Utils.hpp"
+#include <arc/future/PollableMetadata.hpp>
 
 #ifdef GEODE_IS_WINDOWS
     #ifdef ALPHALANEOUS_UTILS_API_EXPORTING
@@ -75,7 +75,8 @@ namespace alpha::utils {
                 });
             }
             else {
-                ObjectModify::get()->addObjectToModify(alpha::utils::cocos::getObjectName<Base>(), Derived::modifyPrio(), [](ModifyCCObject<cocos2d::CCObject>* self) {
+                auto data = arc::getTypename<Base>();
+                ObjectModify::get()->addObjectToModify(std::string_view(data.first, data.second), Derived::modifyPrio(), [](ModifyCCObject<cocos2d::CCObject>* self) {
                     reinterpret_cast<Derived*>(reinterpret_cast<Base*>(self))->modify();
                 });
             }

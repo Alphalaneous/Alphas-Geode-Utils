@@ -39,39 +39,8 @@ namespace alpha::utils {
             return std::nullopt;
         }
 
-        template <class T>
-        static inline geode::ZStringView getObjectName() {
-        #ifdef GEODE_IS_WINDOWS
-            static const std::string name = [] {
-                const char* name = typeid(T).name();
-                if (std::strncmp(name, "class ", 6) == 0) {
-                    name += 6;
-                } else if (std::strncmp(name, "struct ", 7) == 0) {
-                    name += 7;
-                }
-
-                return name;
-            }();
-            return name;
-        #else
-            static const std::string name = [] {
-                int status = 0;
-                char* demangled = abi::__cxa_demangle(typeid(T).name(), nullptr, nullptr, &status);
-                std::string ret;
-                if (status == 0 && demangled) {
-                    ret = demangled;
-                } else {
-                    ret = typeid(T).name();
-                }
-                free(demangled);
-                return ret;
-            }();
-            return name;
-        #endif
-        }
-
         static inline std::optional<cocos2d::CCSprite*> getSprite(geode::ZStringView sprName) {
-            cocos2d::CCSprite* spr = cocos2d::CCSprite::create(sprName.data());
+            cocos2d::CCSprite* spr = cocos2d::CCSprite::create(sprName.c_str());
             if (!spr || spr->getUserObject("geode.texture-loader/fallback")) {
                 return std::nullopt;
             }
@@ -79,7 +48,7 @@ namespace alpha::utils {
         }
 
         static inline std::optional<cocos2d::CCSprite*> getSpriteByFrameName(geode::ZStringView sprFrameName) {
-            cocos2d::CCSprite* spr = cocos2d::CCSprite::createWithSpriteFrameName(sprFrameName.data());
+            cocos2d::CCSprite* spr = cocos2d::CCSprite::createWithSpriteFrameName(sprFrameName.c_str());
             if (!spr || spr->getUserObject("geode.texture-loader/fallback")) {
                 return std::nullopt;
             }

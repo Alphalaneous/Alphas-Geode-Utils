@@ -1,3 +1,6 @@
+# 1.2.2
+- Bug fixes
+
 # 1.2.1
 - Fixed a bug that leaked user objects and fields
 
