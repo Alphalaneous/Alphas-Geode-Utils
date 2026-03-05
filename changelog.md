@@ -1,3 +1,6 @@
+# 1.2.3
+- Made a mistake oops, fixed
+
 # 1.2.2
 - Bug fixes
 
