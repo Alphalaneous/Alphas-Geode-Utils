@@ -47,12 +47,16 @@ ZStringView getObjectNameOptimized(const cocos2d::CCObject* obj) {
 #endif
 }
 
+bool g_closing = false;
+
 ModifyHandler* ModifyHandler::get() {
     static ModifyHandler handler;
     return &handler;
 }
 
 uint32_t ModifyHandler::allocateObjectData(ObjectData* data) {
+    if (g_closing) return 0;
+
     if (!m_slots.empty()) {
         auto id = m_slots.front();
         m_slots.pop();
@@ -65,6 +69,8 @@ uint32_t ModifyHandler::allocateObjectData(ObjectData* data) {
 }
 
 void ModifyHandler::releaseObjectData(uint32_t id) {
+    if (g_closing) return;
+
     if (id < m_arena.size() && m_arena[id]) {
         m_arena[id] = nullptr;
         m_slots.push(id);
@@ -72,6 +78,8 @@ void ModifyHandler::releaseObjectData(uint32_t id) {
 }
 
 ObjectData* ModifyHandler::getObjectData(uint32_t id) {
+    if (g_closing) return nullptr;
+
     if (id < m_arena.size()) {
         return m_arena[id];
     }
@@ -79,6 +87,7 @@ ObjectData* ModifyHandler::getObjectData(uint32_t id) {
 }
 
 void ModifyHandler::createObjectData(CCObject* object) {
+    if (g_closing) return;
     if (object->m_nLuaID != 0) return;
 
     ObjectData* data = new ObjectData();
@@ -87,6 +96,8 @@ void ModifyHandler::createObjectData(CCObject* object) {
 }
 
 void ModifyHandler::handleObject(CCObject* object) {
+    if (g_closing) return;
+
     createObjectData(object);    
     auto& objectsToModify = ObjectModify::get()->getObjectsToModify();
     auto it = objectsToModify.find(getObjectNameOptimized(object));
@@ -102,4 +113,13 @@ void ModifyHandler::handleObject(CCObject* object) {
             pair.method(static_cast<ModifyCCObject<CCObject>*>(object));
         }
     }
+}
+
+void ModifyHandler::cleanup() {
+    g_closing = true;
+    m_arena.clear();
+}
+
+$on_game(Exiting) {
+    ModifyHandler::get()->cleanup();
 }

@@ -29,6 +29,7 @@ namespace alpha::utils {
         ObjectData* getObjectData(uint32_t id);
         void createObjectData(cocos2d::CCObject* object);
         void handleObject(cocos2d::CCObject* object);
+        void cleanup();
 
         template <class Base>
         inline bool containsBase(const cocos2d::CCObject* obj) {

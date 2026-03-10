@@ -1,3 +1,6 @@
+# 1.2.4
+- Cleanup on close
+
 # 1.2.3
 - Made a mistake oops, fixed
 
