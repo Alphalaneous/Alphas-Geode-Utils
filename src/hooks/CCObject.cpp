@@ -1,13 +1,18 @@
-#include <Geode/Geode.hpp>
 #include <Geode/modify/CCObject.hpp>
+#include "Geode/modify/Modify.hpp"
 #include "ModifyHandler.hpp"
+#include "../ModifyHandlerImpl.hpp"
 
 using namespace geode::prelude;
 
-class $modify(CCObject) {
+namespace alpha::utils {
+
+struct AGUCCObject : geode::Modify<AGUCCObject, CCObject> {
     CCObject* autorelease() {
         auto ret = CCObject::autorelease();
-        if (ret) alpha::utils::ModifyHandler::get()->handleObject(this);
+        if (ret) alpha::utils::ModifyHandler::get()->m_impl->handleObject(this);
         return ret;
     }
 };
+
+}

@@ -1,3 +1,11 @@
+# 1.3.0
+- Remove unnecessary ObjectDestroyedEvent
+- Lazy init ObjectMetadata and make it not a CCObject
+- Clean up some goofy code
+
+# 1.2.5
+- Geode v5.6.0 support
+
 # 1.2.4
 - Cleanup on close
 

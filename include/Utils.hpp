@@ -9,8 +9,7 @@
 
 namespace alpha::utils {
     namespace cocos {
-
-        static inline std::optional<cocos2d::CCNode*> getChildByClassName(cocos2d::CCNode* node, geode::ZStringView name, int index = 0) {
+        inline std::optional<cocos2d::CCNode*> getChildByClassName(cocos2d::CCNode* node, geode::ZStringView name, int index = 0) {
             if (!node || node->getChildrenCount() == 0) return nullptr;
 
             size_t indexCounter = 0;
@@ -39,24 +38,24 @@ namespace alpha::utils {
             return std::nullopt;
         }
 
-        static inline std::optional<cocos2d::CCSprite*> getSprite(geode::ZStringView sprName) {
+        inline std::optional<cocos2d::CCSprite*> getSprite(geode::ZStringView sprName) {
             cocos2d::CCSprite* spr = cocos2d::CCSprite::create(sprName.c_str());
-            if (!spr || spr->getUserObject("geode.texture-loader/fallback")) {
+            if (!spr || spr->isUsingFallback()) {
                 return std::nullopt;
             }
             return spr;
         }
 
-        static inline std::optional<cocos2d::CCSprite*> getSpriteByFrameName(geode::ZStringView sprFrameName) {
+        inline std::optional<cocos2d::CCSprite*> getSpriteByFrameName(geode::ZStringView sprFrameName) {
             cocos2d::CCSprite* spr = cocos2d::CCSprite::createWithSpriteFrameName(sprFrameName.c_str());
-            if (!spr || spr->getUserObject("geode.texture-loader/fallback")) {
+            if (!spr || spr->isUsingFallback()) {
                 return std::nullopt;
             }
             return spr;
         }
 
         template <typename Layer, typename = std::enable_if_t<std::is_pointer_v<Layer>>>
-        static inline std::optional<Layer> getLayer() {
+        inline std::optional<Layer> getLayer() {
             auto scene = cocos2d::CCDirector::get()->getRunningScene();
             if (cocos2d::CCTransitionScene* trans = geode::cast::typeinfo_cast<cocos2d::CCTransitionScene*>(scene)) {
                 scene = trans->m_pInScene;
@@ -69,7 +68,7 @@ namespace alpha::utils {
             return std::nullopt;
         }
 
-        static inline std::optional<cocos2d::CCNode*> getLayerByClassName(geode::ZStringView className) {
+        inline std::optional<cocos2d::CCNode*> getLayerByClassName(geode::ZStringView className) {
             auto scene = cocos2d::CCDirector::get()->getRunningScene();
             if (cocos2d::CCTransitionScene* trans = geode::cast::typeinfo_cast<cocos2d::CCTransitionScene*>(scene)) {
                 scene = trans->m_pInScene;
@@ -80,7 +79,7 @@ namespace alpha::utils {
             return std::nullopt;
         }
 
-        static inline bool setColorByHex(cocos2d::CCRGBAProtocol* node, geode::ZStringView colorHex) {
+        inline bool setColorByHex(cocos2d::CCRGBAProtocol* node, geode::ZStringView colorHex) {
             geode::Result<cocos2d::ccColor3B> color = geode::cocos::cc3bFromHexString(colorHex);
             if (color.isOk()) {
                 node->setColor(color.unwrap());
@@ -89,7 +88,7 @@ namespace alpha::utils {
             return false;
         }
 
-        static inline bool hasNode(cocos2d::CCNode* child, cocos2d::CCNode* parent) {
+        inline bool hasNode(cocos2d::CCNode* child, cocos2d::CCNode* parent) {
             while (child) {
                 if (child == parent) {
                     return true;

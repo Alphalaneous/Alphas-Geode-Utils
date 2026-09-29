@@ -1,9 +1,12 @@
 #include "AGUEngine.hpp"
 #include <Geode/modify/MenuLayer.hpp>
 #include "ModifyHandler.hpp"
+#include "ModifyHandlerImpl.hpp"
+
+namespace alpha::utils {
 
 void AGUEngine::removeScriptObjectByCCObject(CCObject* pObj) {
-    ObjectDestroyedEvent(pObj).send();
+    alpha::utils::ModifyHandler::get()->m_impl->releaseObjectData(pObj->m_nLuaID);
 }
 
 cocos2d::ccScriptType AGUEngine::getScriptType() { 
@@ -21,10 +24,8 @@ int AGUEngine::executeMenuItemEvent(cocos2d::CCMenuItem* pMenuItem) {
     return -1; 
 }
 
+}
+
 $on_mod(Loaded) {
-    CCScriptEngineManager::sharedManager()->setScriptEngine(new AGUEngine());
-    
-    ObjectDestroyedEvent().listen([] (CCObject* object) {
-        alpha::utils::ModifyHandler::get()->releaseObjectData(object->m_nLuaID);
-    }).leak();
+    CCScriptEngineManager::sharedManager()->setScriptEngine(new alpha::utils::AGUEngine());
 }

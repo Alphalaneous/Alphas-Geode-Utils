@@ -1,57 +1,55 @@
 #pragma once
 
-#include <queue>
 #include <Geode/cocos/cocoa/CCObject.h>
-#include <Geode/utils/cocos.hpp>
-#include <vector>
-#include "ObjectData.hpp"
+#include <Geode/utils/casts.hpp>
+#include "ObjectMetadata.hpp"
+#include "CCObjectExt.hpp"
+#include "Export.hpp"
 #include <typeindex>
-
-#ifdef GEODE_IS_WINDOWS
-    #ifdef ALPHALANEOUS_UTILS_API_EXPORTING
-        #define ALPHA_UTILS_API_DLL __declspec(dllexport)
-    #else
-        #define ALPHA_UTILS_API_DLL __declspec(dllimport)
-    #endif
-#else
-    #define ALPHA_UTILS_API_DLL __attribute__((visibility("default")))
-#endif
+#include <memory>
 
 namespace alpha::utils {
 
-    class ALPHA_UTILS_API_DLL ModifyHandler {
+class ALPHA_UTILS_API_DLL ModifyHandler {
+public:
+    ModifyHandler();
+    ~ModifyHandler();
 
-    public:
-        static ModifyHandler* get();
+    static ModifyHandler* get();
 
-        uint32_t allocateObjectData(ObjectData* data);
-        void releaseObjectData(uint32_t id);
-        ObjectData* getObjectData(uint32_t id);
-        void createObjectData(cocos2d::CCObject* object);
-        void handleObject(cocos2d::CCObject* object);
-        void cleanup();
+    void cleanup();
 
-        template <class Base>
-        inline bool containsBase(const cocos2d::CCObject* obj) {
-            auto key = std::type_index(typeid(*obj));
-            auto base = std::type_index(typeid(Base));
+    void addObjectToModify(geode::ZStringView className, int priority, geode::Function<void(CCObjectExt<cocos2d::CCObject>*)> method);
+    void addObjectToModifyBase(geode::ZStringView className, int priority, geode::Function<void(CCObjectExt<cocos2d::CCObject>*)> method);
 
-            auto it = m_types.find(key);
-            if (it != m_types.end()) {
-                auto it2 = it->second.find(base);
-                if (it2 != it->second.end()) {
-                    return it2->second;
-                }
+    std::unordered_map<std::type_index, std::unordered_map<std::type_index, bool>>& getTypes();
+
+    template <class Base>
+    inline bool containsBase(const cocos2d::CCObject* obj) {
+        auto key = std::type_index(typeid(*obj));
+        auto base = std::type_index(typeid(Base));
+        auto& types = getTypes();
+
+        auto it = types.find(key);
+        if (it != types.end()) {
+            auto it2 = it->second.find(base);
+            if (it2 != it->second.end()) {
+                return it2->second;
             }
-
-            bool ret = geode::cast::typeinfo_cast<Base*>(obj);
-            m_types[key][base] = ret;
-            return ret;
         }
 
-    protected:
-        std::unordered_map<std::type_index, std::unordered_map<std::type_index, bool>> m_types;
-        std::vector<geode::Ref<ObjectData>> m_arena;
-        std::queue<uint32_t> m_slots;
-    };
+        bool ret = geode::cast::typeinfo_cast<Base*>(obj);
+        types[key][base] = ret;
+        return ret;
+    }
+
+protected:
+    struct Impl;
+    std::unique_ptr<Impl> m_impl; 
+
+    friend class ObjectMetadata;
+    friend class AGUEngine;
+    friend class AGUCCObject;
+};
+
 }

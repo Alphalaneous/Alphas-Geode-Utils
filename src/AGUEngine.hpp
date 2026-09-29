@@ -4,10 +4,7 @@
 
 using namespace geode::prelude;
 
-class ObjectDestroyedEvent : public GlobalEvent<ObjectDestroyedEvent, bool(), CCObject*> {
-    public:
-    using GlobalEvent::GlobalEvent;
-};
+namespace alpha::utils {
 
 class AGUEngine : public cocos2d::CCScriptEngineProtocol {
 
@@ -33,3 +30,5 @@ class AGUEngine : public cocos2d::CCScriptEngineProtocol {
     bool handleAssert(const char *msg) { return false; }
     bool parseConfig(ConfigType type, const gd::string& str) { return false; }
 };
+
+}
