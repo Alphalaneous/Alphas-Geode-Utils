@@ -17,7 +17,7 @@ private:
         }
         else {
             auto data = arc::getTypename<Base>();
-            ModifyHandler::get()->addObjectToModify(std::string(data.first, data.second), Derived::modifyPrio(), [](CCObjectExt<cocos2d::CCObject>* self) {
+            ModifyHandler::get()->addObjectToModify(std::string(data), Derived::modifyPrio(), [](CCObjectExt<cocos2d::CCObject>* self) {
                 reinterpret_cast<Derived*>(reinterpret_cast<Base*>(self))->modify();
             });
         }

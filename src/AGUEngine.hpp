@@ -28,7 +28,7 @@ class AGUEngine : public cocos2d::CCScriptEngineProtocol {
     int executeEvent(int nHandler, const char* pEventName, cocos2d::CCObject* pEventSource = nullptr, const char* pEventSourceClassName = nullptr) { return -1; }
     int executeEventWithArgs(int nHandler, cocos2d::CCArray* pArgs) { return -1; }
     bool handleAssert(const char *msg) { return false; }
-    bool parseConfig(ConfigType type, const gd::string& str) { return false; }
+    bool parseConfig(ConfigType type, const std::string& str) { return false; }
 };
 
 }
