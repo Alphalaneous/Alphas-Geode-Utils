@@ -2,6 +2,7 @@
 - Remove unnecessary ObjectDestroyedEvent
 - Lazy init ObjectMetadata and make it not a CCObject
 - Clean up some goofy code
+- 2.2091 support
 
 # 1.2.5
 - Geode v5.6.0 support
