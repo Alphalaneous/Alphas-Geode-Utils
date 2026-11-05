@@ -42,7 +42,3 @@ void ModifyHandler::addObjectToModifyBase(geode::ZStringView className, int prio
         return a->getPriority() < b->getPriority();
     });
 }
-
-$on_game(Exiting) {
-    ModifyHandler::get()->cleanup();
-}
