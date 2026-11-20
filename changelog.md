@@ -1,4 +1,4 @@
-# 1.3.0
+# 1.3.0-beta.1
 - Remove unnecessary ObjectDestroyedEvent
 - Lazy init ObjectMetadata and make it not a CCObject
 - Clean up some goofy code
