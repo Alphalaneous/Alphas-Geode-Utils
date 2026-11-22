@@ -1,3 +1,6 @@
+# 1.3.0-beta.2
+- Fix fields not working
+
 # 1.3.0-beta.1
 - Remove unnecessary ObjectDestroyedEvent
 - Lazy init ObjectMetadata and make it not a CCObject

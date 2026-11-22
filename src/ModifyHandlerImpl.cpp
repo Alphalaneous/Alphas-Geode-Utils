@@ -58,14 +58,14 @@ uint32_t ModifyHandler::Impl::allocateObjectData() {
     }
 
     m_arena.emplace_back(data);
-    return static_cast<uint32_t>(m_arena.size() - 1);
+    return static_cast<uint32_t>(m_arena.size());
 }
 
 void ModifyHandler::Impl::releaseObjectData(uint32_t id) {
     if (m_closing) return;
 
-    if (id < m_arena.size() && m_arena[id]) {
-        m_arena[id] = nullptr;
+    if (id - 1 < m_arena.size() && m_arena[id - 1]) {
+        m_arena[id - 1] = nullptr;
         m_slots.push(id);
     }
 }

@@ -33,7 +33,7 @@ ObjectMetadata* ObjectMetadata::set(cocos2d::CCObject* target) {
     if (target->m_nLuaID == 0) {
         target->m_nLuaID = handler->m_impl->allocateObjectData();
     }
-    return handler->m_impl->m_arena[target->m_nLuaID].get();
+    return handler->m_impl->m_arena[target->m_nLuaID - 1].get();
 }
 
 ObjectFieldContainer* ObjectMetadata::getFieldContainer(cocos2d::CCObject* object, char const* forClass) {
