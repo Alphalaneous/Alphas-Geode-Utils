@@ -53,7 +53,7 @@ uint32_t ModifyHandler::Impl::allocateObjectData() {
     if (!m_slots.empty()) {
         auto id = m_slots.front();
         m_slots.pop();
-        m_arena[id] = data;
+        m_arena[id - 1] = data;
         return id;
     }
 

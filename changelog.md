@@ -1,3 +1,6 @@
+# 1.3.0-beta.3
+- Fix a crash
+
 # 1.3.0-beta.2
 - Fix fields not working
 
